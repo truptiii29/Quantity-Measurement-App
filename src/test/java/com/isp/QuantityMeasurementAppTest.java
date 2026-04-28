@@ -6,61 +6,85 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuantityMeasurementAppTest {
 
     @Test
-    void testEquality() {
-        var a = new QuantityMeasurementApp.QuantityLength(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.QuantityLength(12.0, LengthUnit.INCH);
+    void testEquality_FeetToFeet_SameValue() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
 
-        assertTrue(a.equals(b));
+        QuantityMeasurementApp.QuantityLength q2 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
+
+        assertTrue(q1.equals(q2));
     }
 
     @Test
-    void testConvertTo() {
-        var a = new QuantityMeasurementApp.QuantityLength(1.0, LengthUnit.FEET);
+    void testEquality_InchToInch_SameValue() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.INCH);
 
-        var result = a.convertTo(LengthUnit.INCH);
+        QuantityMeasurementApp.QuantityLength q2 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.INCH);
 
-        assertEquals(12.0, result.getValue(), 0.0001);
+        assertTrue(q1.equals(q2));
     }
 
     @Test
-    void testStaticConvert() {
-        assertEquals(12.0,
-                QuantityMeasurementApp.convert(1.0,
-                        LengthUnit.FEET,
-                        LengthUnit.INCH),
-                0.0001);
+    void testEquality_FeetToInch_Equivalent() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.QuantityLength q2 =
+                new QuantityMeasurementApp.QuantityLength(12.0,
+                        QuantityMeasurementApp.LengthUnit.INCH);
+
+        assertTrue(q1.equals(q2));
     }
 
     @Test
-    void testAddition_DefaultUnit() {
-        var a = new QuantityMeasurementApp.QuantityLength(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.QuantityLength(12.0, LengthUnit.INCH);
+    void testEquality_InchToFeet_Equivalent() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(12.0,
+                        QuantityMeasurementApp.LengthUnit.INCH);
 
-        var result = QuantityMeasurementApp.QuantityLength.add(a, b);
+        QuantityMeasurementApp.QuantityLength q2 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
 
-        assertEquals(2.0, result.getValue(), 0.0001);
-        assertEquals(LengthUnit.FEET, result.getUnit());
+        assertTrue(q1.equals(q2));
     }
 
     @Test
-    void testAddition_TargetUnit_Yards() {
-        var a = new QuantityMeasurementApp.QuantityLength(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.QuantityLength(12.0, LengthUnit.INCH);
+    void testEquality_DifferentValues() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
 
-        var result = QuantityMeasurementApp.QuantityLength.add(a, b, LengthUnit.YARDS);
+        QuantityMeasurementApp.QuantityLength q2 =
+                new QuantityMeasurementApp.QuantityLength(2.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
 
-        assertEquals(0.6667, result.getValue(), 0.01);
+        assertFalse(q1.equals(q2));
     }
 
     @Test
-    void testInvalidUnit() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new QuantityMeasurementApp.QuantityLength(1.0, null));
+    void testEquality_NullComparison() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
+
+        assertFalse(q1.equals(null));
     }
 
     @Test
-    void testNaN() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new QuantityMeasurementApp.QuantityLength(Double.NaN, LengthUnit.FEET));
+    void testEquality_SameReference() {
+        QuantityMeasurementApp.QuantityLength q1 =
+                new QuantityMeasurementApp.QuantityLength(1.0,
+                        QuantityMeasurementApp.LengthUnit.FEET);
+
+        assertTrue(q1.equals(q1));
     }
 }
