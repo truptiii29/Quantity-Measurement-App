@@ -2,25 +2,6 @@ package com.isp;
 
 public class QuantityMeasurementApp {
 
-    // -------- ENUM --------
-    public enum LengthUnit {
-        FEET(1.0),
-        INCH(1.0 / 12.0),
-        YARDS(3.0),
-        CM(1.0 / 30.48);
-
-        private final double toFeet;
-
-        LengthUnit(double toFeet) {
-            this.toFeet = toFeet;
-        }
-
-        public double toBase(double value) {
-            return value * toFeet;
-        }
-    }
-
-    // -------- QUANTITY CLASS --------
     public static class QuantityLength {
 
         private final double value;
@@ -61,31 +42,33 @@ public class QuantityMeasurementApp {
             return Math.abs(this.toFeet() - other.toFeet()) < epsilon;
         }
 
+        // -------- CONVERT INSTANCE METHOD --------
+        public QuantityLength convertTo(LengthUnit target) {
+            double base = unit.toBase(value);
+            double converted = target.fromBase(base);
+            return new QuantityLength(converted, target);
+        }
+
         // -------- UC6 ADD (default unit = first operand) --------
         public static QuantityLength add(QuantityLength a, QuantityLength b) {
             return add(a, b, a.unit);
         }
 
-        // -------- UC7 ADD (with target unit) --------
-        public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit targetUnit) {
+        // -------- UC7 ADD (target unit specified) --------
+        public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit target) {
 
-            if (a == null || b == null) {
-                throw new IllegalArgumentException("Null operand");
+            if (a == null || b == null || target == null) {
+                throw new IllegalArgumentException("Invalid input");
             }
 
-            if (targetUnit == null) {
-                throw new IllegalArgumentException("Target unit cannot be null");
-            }
+            double sumFeet = a.unit.toBase(a.value) + b.unit.toBase(b.value);
+            double result = target.fromBase(sumFeet);
 
-            double sumFeet = a.toFeet() + b.toFeet();
-
-            double resultValue = sumFeet / targetUnit.toBase(1.0);
-
-            return new QuantityLength(resultValue, targetUnit);
+            return new QuantityLength(result, target);
         }
     }
 
-    // -------- UC5 CONVERSION --------
+    // -------- STATIC CONVERT (UC5) --------
     public static double convert(double value, LengthUnit source, LengthUnit target) {
 
         if (!Double.isFinite(value)) {
@@ -96,11 +79,11 @@ public class QuantityMeasurementApp {
             throw new IllegalArgumentException("Unit cannot be null");
         }
 
-        double valueInFeet = source.toBase(value);
-        return valueInFeet / target.toBase(1.0);
+        double base = source.toBase(value);
+        return target.fromBase(base);
     }
 
-    // -------- MAIN --------
+    // -------- MAIN METHOD --------
     public static void main(String[] args) {
 
         QuantityLength a = new QuantityLength(1.0, LengthUnit.FEET);
@@ -109,13 +92,13 @@ public class QuantityMeasurementApp {
         System.out.println("Equality: " + a.equals(b));
 
         System.out.println("Convert 1 ft to inch: " +
-                convert(1.0, LengthUnit.FEET, LengthUnit.INCH));
+                a.convertTo(LengthUnit.INCH).getValue());
 
-        System.out.println("Addition (default): " +
+        System.out.println("Add default: " +
                 QuantityLength.add(a, b).getValue() + " " +
                 QuantityLength.add(a, b).getUnit());
 
-        System.out.println("Addition (target = YARDS): " +
-                QuantityLength.add(a, b, LengthUnit.YARDS).getValue() + " YARDS");
+        System.out.println("Add in yards: " +
+                QuantityLength.add(a, b, LengthUnit.YARDS).getValue());
     }
 }
