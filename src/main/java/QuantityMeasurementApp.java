@@ -2,10 +2,12 @@ package com.isp;
 
 public class QuantityMeasurementApp {
 
-    // -------- ENUM FOR UNITS --------
+    // -------- ENUM --------
     public enum LengthUnit {
         FEET(1.0),
-        INCH(1.0 / 12.0);
+        INCH(1.0 / 12.0),
+        YARDS(3.0),
+        CM(0.393701 / 12.0);
 
         private final double toFeet;
 
@@ -18,7 +20,7 @@ public class QuantityMeasurementApp {
         }
     }
 
-    // -------- GENERIC QUANTITY CLASS --------
+    // -------- SAME QUANTITY CLASS (NO CHANGE) --------
     public static class Quantity {
         private final double value;
         private final LengthUnit unit;
@@ -41,16 +43,7 @@ public class QuantityMeasurementApp {
             if (obj == null || getClass() != obj.getClass()) return false;
 
             Quantity other = (Quantity) obj;
-
             return Double.compare(this.toFeet(), other.toFeet()) == 0;
         }
-    }
-
-    // -------- MAIN --------
-    public static void main(String[] args) {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
-
-        System.out.println("Equal: " + q1.equals(q2));
     }
 }
